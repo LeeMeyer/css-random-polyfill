@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>css-random-polyfill square demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe4f0;
+      --accent: #0ea5e9;
+      --accent-2: #f97316;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 28%),
+        var(--bg);
+      padding: 32px;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 70ch;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin: 20px 0 24px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--ink);
+      color: white;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(6px);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .stage {
+      display: grid;
+      place-items: center;
+      min-height: 340px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(255, 255, 255, 0.95));
+      overflow: hidden;
+    }
+
+    .randomized {
+      --random-side: random(--side, 80px, 240px);
+      --random-angle: random(element-shared, -8deg, 8deg);
+      width: var(--random-side);
+      height: var(--random-side);
+      transform: rotate(var(--random-angle));
+      transform-origin: center;
+      border-radius: 18px;
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 16px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      user-select: none;
+      transition: transform 120ms linear;
+    }
+
+    .randomized.color-test {
+      --thing: 2;
+      --random-color-control: if(style(--thing: 2): lime; else: orange;);
+      --random-color: if(style(--thing: random(0, 5, 1)): blue; else: red;);
+      width: 220px;
+      height: 220px;
+      transform: none;
+      background: var(--random-color, #111827);
+      border: 6px solid var(--random-color-control, transparent);
+    }
+
+    .randomized.a {
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+    }
+
+    .randomized.b {
+      background: linear-gradient(135deg, var(--accent-2), #ef4444);
+    }
+
+    .tile-title {
+      font-size: 0.95rem;
+      opacity: 0.95;
+    }
+
+    .tile-value {
+      margin-top: 8px;
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+
+    pre {
+      margin: 0;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 16px;
+      overflow: auto;
+      min-height: 380px;
+      white-space: pre-wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.12);
+      color: #0369a1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px; }
+      .stage, pre { min-height: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <h1>css-random-polyfill square demo</h1>
+      <p class="lead">This page is set up to visually inspect the square-size scenario: each tile should resolve one side length per element, use that same value for width and height, and usually differ from the other tiles.</p>
+    </div>
+
+    <div class="toolbar">
+      <button id="rerun" type="button">Re-run polyfill</button>
+      <div class="note">Open the browser console if you want the patched CSS logs.</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="badge">Box A</div>
+        <div class="stage">
+          <div id="box-a" class="randomized a">
+            <div>
+              <div class="tile-title">Element A</div>
+              <div class="tile-value">square</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="badge">Box B</div>
+        <div class="stage">
+          <div id="box-b" class="randomized b">
+            <div>
+              <div class="tile-title">Element B</div>
+              <div class="tile-value">square</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="badge">Box C</div>
+        <div class="stage">
+          <div id="box-c" class="randomized a">
+            <div>
+              <div class="tile-title">Element C</div>
+              <div class="tile-value">square</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="badge">Box D</div>
+        <div class="stage">
+          <div id="box-d" class="randomized b">
+            <div>
+              <div class="tile-title">Element D</div>
+              <div class="tile-value">square</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="badge">Live Readout</div>
+        <pre id="out"></pre>
+      </section>
+
+      <section class="card">
+        <div class="badge">If/Style Color Test</div>
+        <div class="stage">
+          <div id="color-box" class="randomized color-test">
+            <div>
+              <div class="tile-title">Element E</div>
+              <div class="tile-value">if/style color</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    window.__CSS_RANDOM_DEBUG__ = true;
+  </script>
+  <script src="./dist/css-random-polyfill.js"></script>
+  <script>
+    const out = document.getElementById("out");
+    const boxes = [
+      document.getElementById("box-a"),
+      document.getElementById("box-b"),
+      document.getElementById("box-c"),
+      document.getElementById("box-d")
+    ];
+    const colorBox = document.getElementById("color-box");
+
+    function report() {
+      const lines = [];
+
+      boxes.forEach((box, index) => {
+        const styles = getComputedStyle(box);
+        const sideRead1 = styles.getPropertyValue("--random-side").trim();
+        const sideRead2 = styles.getPropertyValue("--random-side").trim();
+        const width = styles.width;
+        const height = styles.height;
+        const sizeLabel = box.querySelector(".tile-value");
+        if (sizeLabel) {
+          sizeLabel.textContent = width;
+        }
+        lines.push(
+          `box ${index + 1}`,
+          "--random-side (read 1): " + sideRead1,
+          "--random-side (read 2): " + sideRead2,
+          "side same within element: " + (sideRead1 === sideRead2 ? "yes" : "no"),
+          "--random-angle: " + styles.getPropertyValue("--random-angle").trim(),
+          "width: " + width,
+          "height: " + height,
+          "is square: " + (width === height ? "yes" : "no"),
+          "size: " + width,
+          "transform: " + styles.transform,
+          ""
+        );
+      });
+
+      const aSide = getComputedStyle(boxes[0]).getPropertyValue("--random-side").trim();
+      const bSide = getComputedStyle(boxes[1]).getPropertyValue("--random-side").trim();
+      lines.push("box A differs from box B: " + (aSide !== bSide ? "yes" : "no"));
+
+      const colorStyles = getComputedStyle(colorBox);
+      const supportsIfStyle = Boolean(globalThis.CSS && globalThis.CSS.supports && globalThis.CSS.supports("color", "if(style(--thing: 2): blue; else: red;)"));
+      const randomColorValue = colorStyles.getPropertyValue("--random-color").trim();
+      const randomColorControlValue = colorStyles.getPropertyValue("--random-color-control").trim();
+      const thingValue = colorStyles.getPropertyValue("--thing").trim();
+      const colorValue = colorStyles.backgroundColor;
+      const borderColorValue = colorStyles.borderTopColor;
+      const colorSizeLabel = colorBox.querySelector(".tile-value");
+      if (colorSizeLabel) {
+        colorSizeLabel.textContent = colorValue;
+      }
+
+      lines.push(
+        "",
+        "if/style color test",
+        "CSS.supports if(style): " + (supportsIfStyle ? "yes" : "no"),
+        "--thing: " + thingValue,
+        "--random-color-control: " + randomColorControlValue,
+        "--random-color: " + randomColorValue,
+        "background-color: " + colorValue,
+        "control border-top-color: " + borderColorValue
+      );
+
+      out.textContent = lines.join("\n").trimEnd();
+    }
+
+    setTimeout(report, 0);
+
+    document.getElementById("rerun").addEventListener("click", () => {
+      if (typeof window.installCSSRandomPolyfill === "function") {
+        window.installCSSRandomPolyfill();
+      }
+      report();
+    });
+  </script>
+</body>
+</html>

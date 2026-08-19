@@ -1,0 +1,47 @@
+{
+  "name": "css-random-polyfill",
+  "version": "0.1.9",
+  "description": "Polyfill for CSS random()",
+  "type": "module",
+  "main": "./src/index.js",
+  "browser": "./dist/css-random-polyfill.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npx esbuild src/browser.js --bundle --platform=browser --format=iife --global-name=cssRandomPolyfill --outfile=dist/css-random-polyfill.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "css",
+    "random",
+    "polyfill",
+    "custom-properties"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeeMeyer/css-random-polyfill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LeeMeyer/css-random-polyfill/issues"
+  },
+  "homepage": "https://github.com/LeeMeyer/css-random-polyfill#readme",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@csstools/css-calc": "3.2.1"
+  }
+}
