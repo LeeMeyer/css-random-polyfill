@@ -20,7 +20,6 @@ npm install css-random-polyfill
 
 This runs the polyfill automatically when the page loads.
 
-For development debugging, set `window.__CSS_RANDOM_DEBUG__ = true;` before the script loads. This keeps the patch logs in dev mode and leaves production output quiet.
 
 For a quick local verification page, open `smoke-test.html` in a browser.
 
@@ -51,4 +50,5 @@ https://webkit.org/blog/17285/rolling-the-dice-with-css-random/
 
 ## Demos
 
-https://codepen.io/collection/yypRBQ
+https://css-tricks.com/css-random-function-polyfill/
+https://codepen.io/collection/WQdYLw
